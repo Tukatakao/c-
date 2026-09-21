@@ -134,7 +134,38 @@ int main()
 
 
 谨慎返回 std::string_view：
-因为不知道什么时候会失效，值的所有者不确定
+因为不知道什么时候会失效，值的所有者不确定;
+1.但是如果返回的是c风格字符串,这个在程序执行期间一直存在，所以视图不会丢失
+也就是return的“false”，而不是std::string t {“false”}; std会在结束时释放，但是字面值不会
+2.如果返回的是本来就传进来的std::string_view参数，也不会失效。
+如果实参是临时对象那么得在同一个表达式中直接使用，不然会悬空；
+
+
+
+
+
+修改视图：
+remove_prefix() 成员函数会从视图的左侧移除若干字符。
+remove_suffix() 成员函数会从视图的右侧移除若干字符。
+
+std::string_view str{ "Peach" }；
+str.remove_prefix(1); 就会扣掉左边第一个
+str.remove_suffix(2);就会扣掉右边第一个
+str = "Peach"; // 重置视图
+下次输出才会重置
+
+
+std::string_view 可以查看子字符串：可以查看比如“hello” 里的任意连续的一部分
+std::string_view 可能以 null 结尾，也可能不以 null 结尾
+查看子字符串的能力带来了一个值得注意的后果：std::string_view 可能以 null 结尾，也可能不以 null 结尾。
+考虑字符串 “snowball”，它是以 null 结尾的。
+如果 std::string_view 查看的是整个字符串，那么它看到的就是一个以 null 结尾的字符串。
+但如果 std::string_view 只查看其中的 “now” 子串，那么这个子串就不是以 null 结尾的（下一个字符是 “b”）。
+
+就是如果查看子字符串就可能不是以null结尾了
+
+
+
 
 
 */
